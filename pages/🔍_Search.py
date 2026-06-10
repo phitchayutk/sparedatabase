@@ -40,16 +40,17 @@ if filtered.empty:
     st.info("ไม่พบข้อมูลที่ค้นหา")
 else:
     inv_cols = ["No","PID","SN","ได้รับมาจาก","Status","Location","Case Ticket","Faulty","Remark"]
-    
-display_df = filtered.reset_index(drop=True).copy()
-display_df["Status"] = display_df["Status"].map({
-    "Available": "✅ Available",
-    "Disable":   "🔴 Disable",
-    "Faulty":    "⚠️ Faulty"
-}).fillna(display_df["Status"])
 
-selection = st.dataframe(
-    display_df,
+    # แปลง icon เฉพาะตอนแสดง — filter เสร็จแล้ว
+    display_df = filtered.reset_index(drop=True).copy()
+    display_df["Status"] = display_df["Status"].map({
+        "Available": "✅ Available",
+        "Disable":   "🔴 Disable",
+        "Faulty":    "⚠️ Faulty"
+    }).fillna(display_df["Status"])
+
+    selection = st.dataframe(
+        display_df,
         use_container_width=True,
         hide_index=True,
         column_config={c: st.column_config.TextColumn(c) for c in inv_cols},
