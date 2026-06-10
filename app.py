@@ -10,7 +10,7 @@ st.set_page_config(
     menu_items={
         "Get Help": None,
         "Report a bug": None,
-        "About": "NT2 Spare Parts Inventory | AIT Managed Services"
+        "About": "NT2 Spare Parts Inventory | ์NT2MA Team"
     }
 )
 
