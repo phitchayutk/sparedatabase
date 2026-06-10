@@ -8,7 +8,9 @@ st.title("📋 Audit Log / History")
 with st.spinner("กำลังโหลด Audit Log..."):
     df = load_audit()
 
-if df.empty:
+AUDIT_COLS = ["Timestamp", "Action", "SN", "PID", "Detail", "Performed By"]
+
+if df.empty or not all(c in df.columns for c in AUDIT_COLS):
     st.info("ยังไม่มี Log การเปลี่ยนแปลง")
     st.stop()
 
