@@ -56,7 +56,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.title("📦 NT2 Spare Parts Inventory")
-st.markdown("ระบบจัดการ Inventory อุปกรณ์ Spare Parts | **AIT Managed Services Team**")
+st.markdown("ระบบจัดการ Inventory อุปกรณ์ Spare Parts | **NT2MA Team**")
 st.markdown("---")
 
 col1, col2 = st.columns(2)
