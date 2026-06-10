@@ -21,7 +21,7 @@ with col_s:
         label_visibility="collapsed"
     )
 with col_f:
-    status_filter = st.selectbox("Status", ["ทั้งหมด", "Available", "Disable", "Faulty"],
+    status_filter = st.selectbox("Status", ["ทั้งหมด", "Available", "Disable"],
                                   label_visibility="collapsed")
 
 filtered = df.copy()
