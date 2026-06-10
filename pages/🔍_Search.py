@@ -13,11 +13,11 @@ if df.empty:
     st.warning("ยังไม่มีข้อมูลในระบบ")
     st.stop()
 
-st.markdown("### 🔎 ค้นหา")
 col_s, col_f = st.columns([3, 1])
 with col_s:
     keyword = st.text_input(
-        "keyword", placeholder="พิมพ์อะไรก็ได้ เช่น SN / PID / Location / Remark / Case Ticket...",
+        "keyword",
+        placeholder="พิมพ์อะไรก็ได้ เช่น SN / PID / Location / Remark / Case Ticket...",
         label_visibility="collapsed"
     )
 with col_f:
@@ -34,22 +34,31 @@ if keyword.strip():
     )
     filtered = filtered[mask]
 
-st.markdown(f"### ผลการค้นหา ({len(filtered)} รายการ)")
+st.markdown(f"#### ผลการค้นหา {len(filtered)} รายการ")
+
 if filtered.empty:
     st.info("ไม่พบข้อมูลที่ค้นหา")
 else:
     def highlight_status(row):
         colors = {"Available": "#d4edda", "Disable": "#f8d7da", "Faulty": "#fff3cd"}
-        bg = colors.get(row["Status"], "#ffffff")
-        return [f"background-color: {bg}"] * len(row)
+        return [f"background-color: {colors.get(row['Status'], '#fff')}"] * len(row)
 
     inv_cols = ["No","PID","SN","ได้รับมาจาก","Status","Location","Case Ticket","Faulty","Remark"]
+
+    sn_list = filtered["SN"].tolist()
+    selected_sn = st.selectbox(
+        "🔎 คลิกเลือก SN เพื่อดูประวัติ",
+        ["— เลือก SN —"] + sn_list,
+        key="selected_sn"
+    )
+
     st.dataframe(
         filtered.style.apply(highlight_status, axis=1),
-        use_container_width=True, hide_index=True,
+        use_container_width=True,
+        hide_index=True,
         column_config={c: st.column_config.TextColumn(c) for c in inv_cols}
     )
-    st.markdown("---")
+
     c1, c2 = st.columns(2)
     with c1:
         csv = filtered.to_csv(index=False).encode("utf-8-sig")
@@ -61,26 +70,22 @@ else:
         st.download_button("⬇️ Export Excel", buf.getvalue(), "search_result.xlsx",
                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
-st.markdown("---")
-st.markdown("### 📋 ดูรายละเอียด SN + ประวัติ")
-sn_detail = st.text_input("ใส่ SN เพื่อดูข้อมูลและประวัติ", key="sn_detail")
+    if selected_sn != "— เลือก SN —":
+        st.markdown("---")
+        row = df[df["SN"].str.upper() == selected_sn.upper()]
+        faulty_ref = df[df["Faulty"].str.upper() == selected_sn.upper()]
 
-if sn_detail:
-    row = df[df["SN"].str.upper() == sn_detail.strip().upper()]
-    if row.empty:
-        st.error(f"ไม่พบ SN: {sn_detail}")
-    else:
-        r = row.iloc[0]
-        status_icon = {"Available": "✅", "Disable": "🔴", "Faulty": "⚠️"}.get(r["Status"], "❓")
         col_info, col_hist = st.columns([1, 2])
 
         with col_info:
-            st.markdown("#### 📦 ข้อมูลปัจจุบัน")
-            st.markdown(f"""
+            st.markdown(f"#### 📦 ข้อมูล: `{selected_sn}`")
+            if not row.empty:
+                r = row.iloc[0]
+                status_icon = {"Available": "✅", "Disable": "🔴", "Faulty": "⚠️"}.get(r["Status"], "❓")
+                st.markdown(f"""
 | Field | Value |
 |---|---|
 | **PID** | {r['PID']} |
-| **SN** | {r['SN']} |
 | **Status** | {status_icon} {r['Status']} |
 | **Location** | {r['Location']} |
 | **ได้รับมาจาก** | {r['ได้รับมาจาก']} |
@@ -88,6 +93,10 @@ if sn_detail:
 | **Faulty Code** | {r['Faulty']} |
 | **Remark** | {r['Remark']} |
 """)
+            if not faulty_ref.empty:
+                st.markdown("**🔗 อ้างอิงเป็น Faulty ใน:**")
+                for _, fr in faulty_ref.iterrows():
+                    st.markdown(f"- SN `{fr['SN']}` → {fr['Location']} | Ticket: {fr['Case Ticket']}")
 
         with col_hist:
             st.markdown("#### 🕐 ประวัติการเปลี่ยนแปลง")
@@ -96,7 +105,7 @@ if sn_detail:
                 st.info("ยังไม่มีประวัติ")
             else:
                 sn_log = audit_df[
-                    audit_df["SN"].str.upper() == sn_detail.strip().upper()
+                    audit_df["SN"].str.upper() == selected_sn.upper()
                 ].iloc[::-1].reset_index(drop=True)
 
                 if sn_log.empty:
@@ -112,8 +121,8 @@ if sn_detail:
                         st.markdown(f"""
 <div style="border-left:4px solid #5B9BD5; padding:10px 16px; margin:8px 0;
             background:#f8f9fa; border-radius:0 10px 10px 0;">
-  <div style="font-weight:700; font-size:16px;">{icon} {log['Action']}
-    <span style="color:#888; font-size:13px; font-weight:400; margin-left:10px;">{log['Timestamp']}</span>
+  <div style="font-weight:700; font-size:15px;">{icon} {log['Action']}
+    <span style="color:#888; font-size:12px; font-weight:400; margin-left:8px;">{log['Timestamp']}</span>
   </div>
   <div style="font-size:14px; color:#333; margin-top:4px;">{log['Detail']}</div>
   <div style="font-size:12px; color:#999; margin-top:2px;">โดย: {log['Performed By']}</div>
