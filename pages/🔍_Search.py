@@ -34,29 +34,20 @@ if keyword.strip():
     )
     filtered = filtered[mask]
 
-st.markdown(f"#### ผลการค้นหา {len(filtered)} รายการ")
+st.markdown(f"#### ผลการค้นหา {len(filtered)} รายการ — คลิก Row เพื่อดูประวัติ")
 
 if filtered.empty:
     st.info("ไม่พบข้อมูลที่ค้นหา")
 else:
-    def highlight_status(row):
-        colors = {"Available": "#d4edda", "Disable": "#f8d7da", "Faulty": "#fff3cd"}
-        return [f"background-color: {colors.get(row['Status'], '#fff')}"] * len(row)
-
     inv_cols = ["No","PID","SN","ได้รับมาจาก","Status","Location","Case Ticket","Faulty","Remark"]
 
-    sn_list = filtered["SN"].tolist()
-    selected_sn = st.selectbox(
-        "🔎 คลิกเลือก SN เพื่อดูประวัติ",
-        ["— เลือก SN —"] + sn_list,
-        key="selected_sn"
-    )
-
-    st.dataframe(
-        filtered.style.apply(highlight_status, axis=1),
+    selection = st.dataframe(
+        filtered.reset_index(drop=True),
         use_container_width=True,
         hide_index=True,
-        column_config={c: st.column_config.TextColumn(c) for c in inv_cols}
+        column_config={c: st.column_config.TextColumn(c) for c in inv_cols},
+        on_select="rerun",
+        selection_mode="single-row",
     )
 
     c1, c2 = st.columns(2)
@@ -70,7 +61,11 @@ else:
         st.download_button("⬇️ Export Excel", buf.getvalue(), "search_result.xlsx",
                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
-    if selected_sn != "— เลือก SN —":
+    selected_rows = selection.selection.get("rows", [])
+    if selected_rows:
+        idx = selected_rows[0]
+        selected_sn = filtered.reset_index(drop=True).iloc[idx]["SN"]
+
         st.markdown("---")
         row = df[df["SN"].str.upper() == selected_sn.upper()]
         faulty_ref = df[df["Faulty"].str.upper() == selected_sn.upper()]
@@ -78,7 +73,7 @@ else:
         col_info, col_hist = st.columns([1, 2])
 
         with col_info:
-            st.markdown(f"#### 📦 ข้อมูล: `{selected_sn}`")
+            st.markdown(f"#### 📦 `{selected_sn}`")
             if not row.empty:
                 r = row.iloc[0]
                 status_icon = {"Available": "✅", "Disable": "🔴", "Faulty": "⚠️"}.get(r["Status"], "❓")
