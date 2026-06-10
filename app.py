@@ -3,10 +3,15 @@ from utils.sheets import init_sheet_headers
 from utils.auth import logout
 
 st.set_page_config(
-    page_title="NT2 Inventory",
+    page_title="NT2 Inventory | AIT",
     page_icon="📦",
     layout="wide",
     initial_sidebar_state="expanded",
+    menu_items={
+        "Get Help": None,
+        "Report a bug": None,
+        "About": "NT2 Spare Parts Inventory | AIT Managed Services"
+    }
 )
 
 # ─── Init ──────────────────────────────────────────────────────────────────────
@@ -19,12 +24,12 @@ init_sheet_headers()
 
 # ─── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
-    st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/NT_logo.svg/320px-NT_logo.svg.png", width=120)
     st.markdown("## 📦 NT2 Inventory")
+    st.markdown("**AIT Managed Services**")
     st.markdown("---")
 
     if st.session_state["is_admin"]:
-        st.success(f"🔓 Admin Mode")
+        st.success("🔓 Admin Mode")
         if st.button("🚪 Logout"):
             logout()
             st.rerun()
@@ -32,32 +37,51 @@ with st.sidebar:
         st.info("👁️ View Only Mode")
 
     st.markdown("---")
-    st.caption("AIT Managed Services | NT2 Account")
+    st.caption("NT2 Account | Spare Parts System")
 
 # ─── Home page ────────────────────────────────────────────────────────────────
-st.title("📦 NT2 Spare Parts Inventory")
 st.markdown("""
-ระบบจัดการ Inventory อุปกรณ์ Spare Parts สำหรับ NT2 Account  
-**AIT Managed Services Team**
+<style>
+.home-card {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px 24px;
+    border-left: 5px solid #5B9BD5;
+    margin-bottom: 12px;
+    font-size: 16px;
+}
+.home-card h3 { margin: 0 0 6px 0; color: #1a1a2e; }
+.home-card p  { margin: 0; color: #555; }
+</style>
+""", unsafe_allow_html=True)
 
----
+st.title("📦 NT2 Spare Parts Inventory")
+st.markdown("ระบบจัดการ Inventory อุปกรณ์ Spare Parts | **AIT Managed Services Team**")
+st.markdown("---")
 
-### เมนูหลัก
-
-| หน้า | คำอธิบาย |
-|---|---|
-| 📊 **Dashboard** | ภาพรวมสถานะอุปกรณ์ทั้งหมด |
-| 🔍 **Search** | ค้นหาอุปกรณ์ด้วย SN / PID / Location |
-| ⚙️ **Admin** | จัดการข้อมูล (Deploy / Receive / Swap / Import) |
-| 📋 **History** | ดู Audit Log การเปลี่ยนแปลงทั้งหมด |
-
----
-""")
-
-col1, col2, col3 = st.columns(3)
+col1, col2 = st.columns(2)
 with col1:
-    st.info("👈 ใช้เมนูด้านซ้ายเพื่อเปลี่ยนหน้า")
+    st.markdown("""
+    <div class="home-card">
+        <h3>📊 Dashboard</h3>
+        <p>ภาพรวมสถานะอุปกรณ์ทั้งหมด KPI + Charts แยก PID</p>
+    </div>
+    <div class="home-card">
+        <h3>🔍 Search</h3>
+        <p>ค้นหาอุปกรณ์ด้วย SN / PID / Location / Status</p>
+    </div>
+    """, unsafe_allow_html=True)
 with col2:
-    st.info("🔐 Admin ต้อง Login ก่อนแก้ไขข้อมูล")
-with col3:
-    st.info("📊 ข้อมูล Sync Real-time กับ Google Sheets")
+    st.markdown("""
+    <div class="home-card">
+        <h3>⚙️ Admin</h3>
+        <p>Deploy / Receive / Swap / Add Manual / Import Excel</p>
+    </div>
+    <div class="home-card">
+        <h3>📋 History</h3>
+        <p>Audit Log บันทึกการเปลี่ยนแปลงทุก Action</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+st.markdown("---")
+st.info("👈 เลือกเมนูด้านซ้ายเพื่อเริ่มใช้งาน  |  🔐 Admin Login ที่หน้า Admin Panel")
