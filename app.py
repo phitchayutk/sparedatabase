@@ -10,11 +10,10 @@ st.set_page_config(
     menu_items={
         "Get Help": None,
         "Report a bug": None,
-        "About": "NT2 Spare Parts Inventory | ์NT2MA Team"
+        "About": "NT2 Spare Parts Inventory | NT2MA Team"
     }
 )
 
-# ─── Init ──────────────────────────────────────────────────────────────────────
 if "is_admin" not in st.session_state:
     st.session_state["is_admin"] = False
 if "admin_name" not in st.session_state:
@@ -22,12 +21,10 @@ if "admin_name" not in st.session_state:
 
 init_sheet_headers()
 
-# ─── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
     st.markdown("## 📦 NT2 Inventory")
     st.markdown("**AIT Managed Services**")
     st.markdown("---")
-
     if st.session_state["is_admin"]:
         st.success("🔓 Admin Mode")
         if st.button("🚪 Logout"):
@@ -35,11 +32,9 @@ with st.sidebar:
             st.rerun()
     else:
         st.info("👁️ View Only Mode")
-
     st.markdown("---")
     st.caption("NT2 Account | Spare Parts System")
 
-# ─── Home page ────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
 .home-card {
@@ -56,7 +51,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.title("📦 NT2 Spare Parts Inventory")
-st.markdown("ระบบจัดการ Inventory อุปกรณ์ Spare Parts | **NT2MA Team**")
+st.markdown("ระบบจัดการ Inventory อุปกรณ์ Spare Parts | NT2MA Team")
 st.markdown("---")
 
 col1, col2 = st.columns(2)
@@ -69,6 +64,10 @@ with col1:
     <div class="home-card">
         <h3>🔍 Search</h3>
         <p>ค้นหาอุปกรณ์ด้วย SN / PID / Location / Status</p>
+    </div>
+    <div class="home-card">
+        <h3>📡 Device in TOR</h3>
+        <p>ตารางอุปกรณ์ใน TOR แยก PE / LPE ค้นหาและ Export ได้</p>
     </div>
     """, unsafe_allow_html=True)
 with col2:
