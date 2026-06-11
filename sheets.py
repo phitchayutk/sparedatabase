@@ -99,8 +99,8 @@ def init_sheet_headers():
         tor_lpe_ws = get_sheet("tor_lpe")
         if not tor_lpe_ws.get_all_values():
             tor_lpe_ws.update([LPE_COLS])
-    except Exception as e:
-        st.error(f"Init sheet error: {e}")
+    except Exception:
+        pass
 
 
 def append_audit(action: str, sn: str, pid: str, detail: str, performed_by: str):
