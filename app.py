@@ -1,5 +1,4 @@
 import streamlit as st
-from utils.sheets import init_sheet_headers
 from utils.auth import logout
 
 st.set_page_config(
@@ -18,11 +17,6 @@ if "is_admin" not in st.session_state:
     st.session_state["is_admin"] = False
 if "admin_name" not in st.session_state:
     st.session_state["admin_name"] = ""
-
-try:
-    init_sheet_headers()
-except:
-    pass
 
 with st.sidebar:
     st.markdown("## 📦 NT2 Inventory")
