@@ -19,7 +19,10 @@ if "is_admin" not in st.session_state:
 if "admin_name" not in st.session_state:
     st.session_state["admin_name"] = ""
 
-init_sheet_headers()
+try:
+    init_sheet_headers()
+except:
+    pass
 
 with st.sidebar:
     st.markdown("## 📦 NT2 Inventory")
